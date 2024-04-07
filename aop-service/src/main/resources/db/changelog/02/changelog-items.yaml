@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-items
+      author: liquibase
+      preConditions:
+        - onFail:
+          not:
+            tableExists:
+              tableName: items
+      changes:
+        - createTable:
+            tableName: items
+            columns:
+              - column:
+                  name: items_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: items_name
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: items_description
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: items_price
+                  type: integer
+                  constraints:
+                    nullable: false
+
+        - createSequence:
+            sequenceName: SEQ_ITEM
+            startValue: 1
+            incrementBy: 10

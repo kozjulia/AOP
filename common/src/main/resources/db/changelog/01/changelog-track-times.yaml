@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-track-times
+      author: liquibase
+      preConditions:
+        - onFail:
+          not:
+            tableExists:
+              tableName: track_times
+      changes:
+        - createTable:
+            tableName: track_times
+            columns:
+              - column:
+                  name: track_times_id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: track_times_name
+                  type: varchar(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: track_times_class_name
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: track_times_method_name
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: track_times_total_time
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - createSequence:
+            sequenceName: SEQ_TRACK_TIME
+            startValue: 1
+            incrementBy: 10

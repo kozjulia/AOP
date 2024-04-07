@@ -1,0 +1,27 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/aop
+    username: test
+    password: test
+
+  sql:
+    init:
+      mode: always
+
+logging:
+  level:
+    root: debug
+    org:
+      springframework:
+        orm:
+          jpa: info

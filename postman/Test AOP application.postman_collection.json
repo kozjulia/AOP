@@ -1,0 +1,641 @@
+{
+	"info": {
+		"_postman_id": "ad19eb61-3783-468b-9b25-70d844142f12",
+		"name": "Test AOP application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31033954"
+	},
+	"item": [
+		{
+			"name": "Item",
+			"item": [
+				{
+					"name": "Поиск элемента по id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+									"    pm.response.to.be.ok;    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const source = pm.collectionVariables.get('response');\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Элементы должны содержать поля: id, name, description, price\", function () {\r",
+									"    pm.expect(target).to.have.property('id');\r",
+									"    pm.expect(target).to.have.property('name');\r",
+									"    pm.expect(target).to.have.property('description');\r",
+									"    pm.expect(target).to.have.property('price');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(source.id).equal(target.id, 'Идентификатор элемента должен соответствовать идентификатору в запросе');   \r",
+									"    pm.expect(source.name).equal(target.name, 'Наименование элемента должно соответствовать наименованию элемента в запросе');\r",
+									"    pm.expect(source.description).equal(target.description, 'Полное описание блюда должно соответствовать полному описанию блюда в запросе');\r",
+									"    pm.expect(source.price).equal(target.price, 'Цена блюда должна соответствовать цене блюда в запросе');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let item;\r",
+									"    try {\r",
+									"        item = await api.addItem(rnd.getItem());\r",
+									"        pm.collectionVariables.set(\"uid\", item.id)\r",
+									"        pm.collectionVariables.set(\"response\", item)        \r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{aopServiceUrl}}/item/:itemId",
+							"host": [
+								"{{aopServiceUrl}}"
+							],
+							"path": [
+								"item",
+								":itemId"
+							],
+							"variable": [
+								{
+									"key": "itemId",
+									"value": "{{uid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Поиск элементов",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {  \r",
+									"        let item = rnd.getItem();\r",
+									"        item = await api.addItem(item);\r",
+									"        pm.collectionVariables.set('response', item);        \r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+									"    pm.response.to.be.ok;    \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const source = pm.collectionVariables.get('response');\r",
+									"const target = pm.response.json().content[0];\r",
+									"\r",
+									"pm.test(\"Событие должно содержать поля: id, name, description, price\", function () {\r",
+									"    pm.expect(target).to.have.property('id');\r",
+									"    pm.expect(target).to.have.property('name');\r",
+									"    pm.expect(target).to.have.property('description');\r",
+									"    pm.expect(target).to.have.property('price');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{aopServiceUrl}}/item?from=0&size=500",
+							"host": [
+								"{{aopServiceUrl}}"
+							],
+							"path": [
+								"item"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "0",
+									"description": "количество элементов, которые нужно пропустить для формирования текущего набора"
+								},
+								{
+									"key": "size",
+									"value": "500",
+									"description": "количество элементов в наборе"
+								}
+							]
+						},
+						"description": "Эндпоинт возвращает полную информацию обо всех событиях подходящих под переданные условия"
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление нового элемента",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let item;\r",
+									"    try {\r",
+									"        item = rnd.getItem();\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"    pm.request.body.update({\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify(item),\r",
+									"        options: { raw: { language: 'json' } }\r",
+									"    });\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+									"    pm.response.to.have.status(201);  \r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const source = JSON.parse(pm.request.body.raw);\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Событие должно содержать поля: id, name, description, price\", function () {\r",
+									"    pm.expect(target).to.have.property('id');\r",
+									"    pm.expect(target).to.have.property('name');\r",
+									"    pm.expect(target).to.have.property('description');\r",
+									"    pm.expect(target).to.have.property('price');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target.id).to.not.be.null;\r",
+									"    pm.expect(target.name).equal(source.name, 'Наименование элемента должно соответствовать наименованию элемента в запросе');\r",
+									"    pm.expect(target.description).equal(source.description, 'Полное описание блюда должно соответствовать полному описанию блюда в запросе');\r",
+									"    pm.expect(target.price.toString()).equal(source.price.toString(), 'Цена блюда должна соответствовать цене блюда в запросе');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{aopServiceUrl}}/item",
+							"host": [
+								"{{aopServiceUrl}}"
+							],
+							"path": [
+								"item"
+							]
+						},
+						"description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+					},
+					"response": []
+				},
+				{
+					"name": "Редактирование элемента",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {       \r",
+									"        let item = await api.addItem(rnd.getItem());\r",
+									"        let item2 = rnd.getItem();   \r",
+									"        item2.id = item.id;     \r",
+									"        pm.collectionVariables.set('response', item2);\r",
+									"        pm.collectionVariables.set(\"uid\", item.id)\r",
+									"        pm.request.body.update({\r",
+									"            mode: 'raw',\r",
+									"            raw: item2,\r",
+									"            options: { raw: { language: 'json' } }\r",
+									"        });\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            // выполняем наш скрипт\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{aopServiceUrl}}/item/:itemId",
+							"host": [
+								"{{aopServiceUrl}}"
+							],
+							"path": [
+								"item",
+								":itemId"
+							],
+							"variable": [
+								{
+									"key": "itemId",
+									"value": "{{uid}}"
+								}
+							]
+						},
+						"description": "Обратите внимание:\n - дата начала события должна быть не ранее чем за час от даты публикации.\n- событие должно быть в состоянии ожидания публикации"
+					},
+					"response": []
+				},
+				{
+					"name": "Удаление элемента",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"const source = pm.collectionVariables.get('response');\r",
+									"const itemId = pm.collectionVariables.get('uid');\r",
+									"\r",
+									"pm.test(\"Элемент должен быть найден до выполнения запроса\", function(){    \r",
+									"    pm.expect(source.id).equal(itemId, 'Идентификтор элемента должен совпадать с удаляемым');\r",
+									"});\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"            url: pm.collectionVariables.get(\"aopServiceUrl\") + \"/item/\" + itemId,\r",
+									"            method: 'GET',\r",
+									"        }, (error, response) => {\r",
+									"            pm.test(\"Элемент не должен быть найден после удаления\", function () {\r",
+									"                pm.expect(response.code).to.eql(404);\r",
+									"            });\r",
+									"        });"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let item;\r",
+									"    try {       \r",
+									"        const item = await api.addItem(rnd.getItem());\r",
+									"        const foundedItem = await api.findItem(item.id);\r",
+									"        pm.collectionVariables.set(\"uid\", item.id);\r",
+									"        pm.collectionVariables.set(\"response\", foundedItem)\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{aopServiceUrl}}/item/:itemId",
+							"host": [
+								"{{aopServiceUrl}}"
+							],
+							"path": [
+								"item",
+								":itemId"
+							],
+							"variable": [
+								{
+									"key": "itemId",
+									"value": "{{uid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"API = class {\r",
+					"    constructor(postman, verbose = false, baseUrl = \"http://localhost:8081\") {\r",
+					"        this.baseUrl = baseUrl;\r",
+					"        this.pm = postman;\r",
+					"        this._verbose = verbose;\r",
+					"    }\r",
+					"\r",
+					"    async addItem(item, verbose=null) {\r",
+					"        return this.post(\"/item\", item, \"Ошибка при добавлении нового элемента: \", verbose);\r",
+					"    }\r",
+					"\r",
+					"    async findItem(itemId, verbose=null) {\r",
+					"        return this.get('/item/' + itemId, null, \"Ошибка при поиске элемента по id\", verbose);\r",
+					"    }\r",
+					"\r",
+					"    async post(path, body, errorText = \"Ошибка при выполнении post-запроса: \", verbose=null) {\r",
+					"        return this.sendRequest(\"POST\", path, body, errorText, verbose);\r",
+					"    }\r",
+					"\r",
+					"    async patch(path, body = null, errorText = \"Ошибка при выполнении patch-запроса: \", verbose=null) {\r",
+					"        return this.sendRequest(\"PATCH\", path, body, errorText, verbose);\r",
+					"    }\r",
+					"\r",
+					"    async get(path, body = null, errorText = \"Ошибка при выполнении get-запроса: \", verbose=null) {\r",
+					"        return this.sendRequest(\"GET\", path, body, errorText, verbose);\r",
+					"    }\r",
+					"\r",
+					"    async sendRequest(method, path, body=null, errorText = \"Ошибка при выполнении запроса: \", verbose=null) {\r",
+					"        return new Promise((resolve, reject) => {\r",
+					"            verbose = verbose == null ? this._verbose : verbose;\r",
+					"\r",
+					"            const request = {\r",
+					"                url: this.baseUrl + path,\r",
+					"                method: method,\r",
+					"                body: body == null ? \"\" : JSON.stringify(body),\r",
+					"                header: { \"Content-Type\": \"application/json\" },\r",
+					"            };\r",
+					"\r",
+					"            if(verbose) {\r",
+					"                console.log(\"Отправляю запрос: \", request);\r",
+					"            }\r",
+					"\r",
+					"            try {\r",
+					"                this.pm.sendRequest(request, (error, response) => {\r",
+					"                    if(error || (response.code >= 400 && response.code <= 599)) {\r",
+					"                        let err = error ? error : JSON.stringify(response.json());\r",
+					"                        console.error(\"При выполнении запроса к серверу возникла ошибка.\\n\", err,\r",
+					"                             \"\\nДля отладки проблемы повторите такой же запрос к вашей программе \" + \r",
+					"                             \"на локальном компьютере. Данные запроса:\\n\", JSON.stringify(request));\r",
+					"\r",
+					"                        reject(new Error(errorText + err));\r",
+					"                    }\r",
+					"\r",
+					"                    if(verbose) {\r",
+					"                        console.log(\"Результат обработки запроса: код состояния - \", response.code, \", тело: \", response.json());\r",
+					"                    }\r",
+					"\r",
+					"                    resolve(response.json());\r",
+					"                });\r",
+					"            } catch(err) {\r",
+					"                if(verbose) {\r",
+					"                    console.error(errorText, err);\r",
+					"                }\r",
+					"                return Promise.reject(err);\r",
+					"            }\r",
+					"        });\r",
+					"    }\r",
+					"};\r",
+					"\r",
+					"RandomUtils = class {\r",
+					"    constructor() {}\r",
+					"\r",
+					"    getItem() {\r",
+					"        return {\r",
+					"            name: pm.variables.replaceIn('{{$randomWords}}'),\r",
+					"            description: pm.variables.replaceIn('{{$randomWords}}'),\r",
+					"            price:  pm.variables.replaceIn('{{$randomInt}}')\r",
+					"        }\r",
+					"    }\r",
+					"\r",
+					"    getWord(length = 1) {\r",
+					"        let result = '';\r",
+					"        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\r",
+					"        const charactersLength = characters.length;\r",
+					"        let counter = 0;\r",
+					"        while (counter < length) {\r",
+					"            result += characters.charAt(Math.floor(Math.random() * charactersLength));\r",
+					"            counter += 1;\r",
+					"        }\r",
+					"        return result;\r",
+					"    }\r",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "aopServiceUrl",
+			"value": "http://localhost:8081",
+			"type": "string"
+		},
+		{
+			"key": "aopStatisticUrl",
+			"value": "http://localhost:8082",
+			"type": "string"
+		},
+		{
+			"key": "response",
+			"value": ""
+		},
+		{
+			"key": "uid",
+			"value": ""
+		}
+	]
+}
