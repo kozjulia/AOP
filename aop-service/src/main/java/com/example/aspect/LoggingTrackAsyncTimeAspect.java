@@ -1,6 +1,7 @@
 package com.example.aspect;
 
 import com.example.dto.NewTrackTimeDto;
+import com.example.exception.TrackAsyncTimeException;
 import com.example.service.TrackTimeService;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -46,7 +47,8 @@ public class LoggingTrackAsyncTimeAspect {
                     try {
                         return joinPoint.proceed();
                     } catch (Throwable e) {
-                        throw new RuntimeException(e);
+                        throw new TrackAsyncTimeException("В аннотации @TrackAsyncTime произошла ошибка в " +
+                                className + "." + methodName);
                     } finally {
                         stopWatch.stop();
                         long totalTime = stopWatch.getTotalTimeMillis();
