@@ -36,33 +36,31 @@ public class LoggingTrackAsyncTimeAspect {
             return joinPoint.proceed();
         }
 
-        return CompletableFuture.runAsync(() -> {
-            try {
-                log.info("Асинхронный запуск в TrackAsyncTime");
-                final StopWatch stopWatch = new StopWatch();
-                stopWatch.start();
-                MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-                String className = methodSignature.getDeclaringType().getSimpleName();
-                String methodName = methodSignature.getName();
+        return CompletableFuture.supplyAsync(() -> {
+                    log.info("Асинхронный запуск в TrackAsyncTime");
+                    final StopWatch stopWatch = new StopWatch();
+                    stopWatch.start();
+                    MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+                    String className = methodSignature.getDeclaringType().getSimpleName();
+                    String methodName = methodSignature.getName();
+                    try {
+                        return joinPoint.proceed();
+                    } catch (Throwable e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        stopWatch.stop();
+                        long totalTime = stopWatch.getTotalTimeMillis();
+                        log.info("Async execution time for " + className + "." + methodName + " :: " + totalTime + " millis.");
 
-                try {
-                    joinPoint.proceed();
-                } finally {
-                    stopWatch.stop();
-                    long totalTime = stopWatch.getTotalTimeMillis();
-                    log.info("Async execution time for " + className + "." + methodName + " :: " + totalTime + " millis.");
-
-                    NewTrackTimeDto trackTime = new NewTrackTimeDto();
-                    trackTime.setName("TrackAsyncTime");
-                    trackTime.setClassName(className);
-                    trackTime.setMethodName(methodName);
-                    trackTime.setTotalTime(totalTime);
-                    trackTimeService.saveTrackTime(trackTime);
-                }
-            } catch (Throwable e) {
-                log.error("Ошибка TrackAsyncTime", e);
-            }
-        });
+                        NewTrackTimeDto trackTime = new NewTrackTimeDto();
+                        trackTime.setName("TrackAsyncTime");
+                        trackTime.setClassName(className);
+                        trackTime.setMethodName(methodName);
+                        trackTime.setTotalTime(totalTime);
+                        trackTimeService.saveTrackTime(trackTime);
+                    }
+                })
+                .thenApply(result -> result);
     }
 
 }

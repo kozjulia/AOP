@@ -3,10 +3,11 @@ package com.example.service;
 import com.example.dto.ItemDto;
 import com.example.dto.NewItemDto;
 import com.example.dto.UpdateItemDto;
+import com.example.exception.NotFoundException;
 import com.example.mapper.ItemMapper;
+import com.example.mapper.ItemServiceMapper;
 import com.example.model.Item;
 import com.example.repository.ItemRepository;
-import com.example.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final ItemMapper itemMapper;
+    private final ItemServiceMapper itemServiceMapper;
 
     @Transactional(readOnly = true)
     @Override
@@ -38,14 +40,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto saveItem(NewItemDto newItemDto) {
-        Item item = itemRepository.save(itemMapper.toItemFromNewItemDto(newItemDto));
+        Item item = itemRepository.save(itemServiceMapper.toItemFromNewItemDto(newItemDto));
         return itemMapper.toItemDto(item);
     }
 
     @Override
     public void updateItem(Long itemId, UpdateItemDto updateItemDto) {
         Item item = returnItem(itemId);
-        item = itemMapper.toItemFromUpdateItemDto(item, updateItemDto);
+        item = itemServiceMapper.toItemFromUpdateItemDto(item, updateItemDto);
         itemRepository.save(item);
     }
 

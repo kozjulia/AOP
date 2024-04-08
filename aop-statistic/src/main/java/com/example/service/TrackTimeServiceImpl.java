@@ -28,7 +28,7 @@ public class TrackTimeServiceImpl implements TrackTimeService {
             Integer from, Integer size, String name, String className, String methodName) {
         Pageable page = PageRequest.of(from, size);
         List<TrackTime> trackTimes = trackTimeRepository.getAllTrackTimes(name, className, methodName, page);
-        return trackTimes.stream().map(trackTimeMapper::toTrackTimeDto).toList();
+        return trackTimeMapper.convertTrackTimeListToTrackTimeDtoList(trackTimes);
     }
 
     public Long sumAllTrackTimes(String name, String className, String methodName) {

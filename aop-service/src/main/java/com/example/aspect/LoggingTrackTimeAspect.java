@@ -23,7 +23,7 @@ public class LoggingTrackTimeAspect {
     @Value("${logging.track.time.switch: true}")
     private boolean loggingTrackTimeSwitch;
 
-   private final TrackTimeService trackTimeService;
+    private final TrackTimeService trackTimeService;
 
     @Pointcut("@annotation(com.example.annotation.TrackTime)")
     public void loggingMethod() {
@@ -34,6 +34,7 @@ public class LoggingTrackTimeAspect {
         if (Objects.equals(loggingTrackTimeSwitch, false)) {
             return joinPoint.proceed();
         }
+
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();

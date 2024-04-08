@@ -36,7 +36,7 @@ logging:
         web: info
   track:
     time:
-      switch: true
+      switch: false
     async:
       time:
-        switch: false
+        switch: true

@@ -19,7 +19,7 @@
     <modules>
         <module>aop-service</module>
         <module>aop-statistic</module>
-        <module>common</module>
+        <module>model</module>
     </modules>
 
     <properties>

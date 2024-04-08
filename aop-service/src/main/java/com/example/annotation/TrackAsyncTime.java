@@ -7,6 +7,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+/**
+ * аннотацию можно ставить на void-методах, либо методах,
+ * которые возвращают CompletableFuture<T>
+ */
 public @interface TrackAsyncTime {
 
 }

@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Hidden;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -62,8 +61,7 @@ public class ErrorHandler {
         apiError.setInfo("Не сохранено.");
         apiError.setMessage(e.getMessage());
         apiError.setTimestamp(LocalDateTime.now());
-        apiError.setErrors(Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).
-                collect(Collectors.toList()));
+        apiError.setErrors(Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toList());
 
         log.warn(apiError.toString());
         return apiError;
@@ -79,8 +77,7 @@ public class ErrorHandler {
         apiError.setInfo("Не найдено.");
         apiError.setMessage(e.getMessage());
         apiError.setTimestamp(LocalDateTime.now());
-        apiError.setErrors(Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).
-                collect(Collectors.toList()));
+        apiError.setErrors(Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toList());
 
         log.warn(apiError.toString());
         return apiError;
