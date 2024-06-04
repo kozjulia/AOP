@@ -63,6 +63,7 @@ public class ItemController {
                             schema = @Schema(implementation = ApiError.class),
                             examples = {@ExampleObject(value = ITEM_ERROR_404_EXAMPLE)})})})
     @TrackTime
+    @TrackAsyncTime
     /**
      * Возвращение информации об элементе по id.
      */
@@ -84,6 +85,7 @@ public class ItemController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ApiError.class),
                             examples = {@ExampleObject(value = ITEM_ERROR_404_EXAMPLE)})})})
+    @TrackTime
     @TrackAsyncTime
     /**
      * Возвращение асинхронно информации об элементе по id.
@@ -103,6 +105,7 @@ public class ItemController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ItemPage.class))})})
     @TrackTime
+    @TrackAsyncTime
     /**
      * Возвращение информации об элементах.
      */
@@ -124,6 +127,7 @@ public class ItemController {
             @ApiResponse(responseCode = "200", description = "Ok",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ItemPage.class))})})
+    @TrackTime
     @TrackAsyncTime
     /**
      * Возвращение асинхронно информации об элементах.
@@ -155,6 +159,7 @@ public class ItemController {
                             schema = @Schema(implementation = ApiError.class),
                             examples = {@ExampleObject(value = ITEM_ERROR_400_EXAMPLE)})})})
     @TrackTime
+    @TrackAsyncTime
     /**
      * Добавление нового элемента.
      */
@@ -176,6 +181,7 @@ public class ItemController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ApiError.class),
                             examples = {@ExampleObject(value = ITEM_ERROR_400_EXAMPLE)})})})
+    @TrackTime
     @TrackAsyncTime
     /**
      * Добавление нового элемента асинхронно.

@@ -10,198 +10,7 @@
 			"name": "Item",
 			"item": [
 				{
-					"name": "common",
-					"item": [
-						{
-							"name": "Редактирование элемента",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"const main = async () => {\r",
-											"    const api = new API(pm);\r",
-											"    const rnd = new RandomUtils();\r",
-											"\r",
-											"    try {       \r",
-											"        let item = await api.addItem(rnd.getItem());\r",
-											"        let item2 = rnd.getItem();   \r",
-											"        item2.id = item.id;     \r",
-											"        pm.collectionVariables.set('response', item2);\r",
-											"        pm.collectionVariables.set(\"uid\", item.id)\r",
-											"        pm.request.body.update({\r",
-											"            mode: 'raw',\r",
-											"            raw: item2,\r",
-											"            options: { raw: { language: 'json' } }\r",
-											"        });\r",
-											"    } catch(err) {\r",
-											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
-											"    }\r",
-											"};\r",
-											"\r",
-											"const interval = setInterval(() => {}, 1000);\r",
-											"\r",
-											"setTimeout(async () => \r",
-											"    {\r",
-											"        try {\r",
-											"            // выполняем наш скрипт\r",
-											"            await main();\r",
-											"        } catch (e) {\r",
-											"            console.error(e);\r",
-											"        } finally {\r",
-											"            clearInterval(interval);\r",
-											"        }\r",
-											"    },  \r",
-											"    100 \r",
-											");"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "PATCH",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{aopServiceUrl}}/item/:itemId",
-									"host": [
-										"{{aopServiceUrl}}"
-									],
-									"path": [
-										"item",
-										":itemId"
-									],
-									"variable": [
-										{
-											"key": "itemId",
-											"value": "{{uid}}"
-										}
-									]
-								},
-								"description": "Обратите внимание:\n - дата начала события должна быть не ранее чем за час от даты публикации.\n- событие должно быть в состоянии ожидания публикации"
-							},
-							"response": []
-						},
-						{
-							"name": "Удаление элемента",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Ответ должен содержать код статуса 204\", function () {\r",
-											"    pm.response.to.have.status(204);\r",
-											"});\r",
-											"const source = pm.collectionVariables.get('response');\r",
-											"const itemId = pm.collectionVariables.get('uid');\r",
-											"\r",
-											"pm.test(\"Элемент должен быть найден до выполнения запроса\", function(){    \r",
-											"    pm.expect(source.id).equal(itemId, 'Идентификтор элемента должен совпадать с удаляемым');\r",
-											"});\r",
-											"\r",
-											"pm.sendRequest({\r",
-											"            url: pm.collectionVariables.get(\"aopServiceUrl\") + \"/item/\" + itemId,\r",
-											"            method: 'GET',\r",
-											"        }, (error, response) => {\r",
-											"            pm.test(\"Элемент не должен быть найден после удаления\", function () {\r",
-											"                pm.expect(response.code).to.eql(404);\r",
-											"            });\r",
-											"        });"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"const main = async () => {\r",
-											"    const api = new API(pm);\r",
-											"    const rnd = new RandomUtils();\r",
-											"\r",
-											"    let item;\r",
-											"    try {       \r",
-											"        const item = await api.addItem(rnd.getItem());\r",
-											"        const foundedItem = await api.findItem(item.id);\r",
-											"        pm.collectionVariables.set(\"uid\", item.id);\r",
-											"        pm.collectionVariables.set(\"response\", foundedItem)\r",
-											"    } catch(err) {\r",
-											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
-											"    }\r",
-											"};\r",
-											"\r",
-											"const interval = setInterval(() => {}, 1000);\r",
-											"\r",
-											"setTimeout(async () => \r",
-											"    {\r",
-											"        try {\r",
-											"            await main();\r",
-											"        } catch (e) {\r",
-											"            console.error(e);\r",
-											"        } finally {\r",
-											"            clearInterval(interval);\r",
-											"        }\r",
-											"    },  \r",
-											"    100 \r",
-											");"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "{{aopServiceUrl}}/item/:itemId",
-									"host": [
-										"{{aopServiceUrl}}"
-									],
-									"path": [
-										"item",
-										":itemId"
-									],
-									"variable": [
-										{
-											"key": "itemId",
-											"value": "{{uid}}"
-										}
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "only sync",
+					"name": "sync api",
 					"item": [
 						{
 							"name": "Поиск элемента по id",
@@ -509,11 +318,188 @@
 								"description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
 							},
 							"response": []
+						},
+						{
+							"name": "Редактирование элемента",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    try {       \r",
+											"        let item = await api.addItem(rnd.getItem());\r",
+											"        let item2 = rnd.getItem();   \r",
+											"        item2.id = item.id;     \r",
+											"        pm.collectionVariables.set('response', item2);\r",
+											"        pm.collectionVariables.set(\"uid\", item.id)\r",
+											"        pm.request.body.update({\r",
+											"            mode: 'raw',\r",
+											"            raw: item2,\r",
+											"            options: { raw: { language: 'json' } }\r",
+											"        });\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            // выполняем наш скрипт\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{aopServiceUrl}}/item/:itemId",
+									"host": [
+										"{{aopServiceUrl}}"
+									],
+									"path": [
+										"item",
+										":itemId"
+									],
+									"variable": [
+										{
+											"key": "itemId",
+											"value": "{{uid}}"
+										}
+									]
+								},
+								"description": "Обратите внимание:\n - дата начала события должна быть не ранее чем за час от даты публикации.\n- событие должно быть в состоянии ожидания публикации"
+							},
+							"response": []
+						},
+						{
+							"name": "Удаление элемента",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 204\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});\r",
+											"const source = pm.collectionVariables.get('response');\r",
+											"const itemId = pm.collectionVariables.get('uid');\r",
+											"\r",
+											"pm.test(\"Элемент должен быть найден до выполнения запроса\", function(){    \r",
+											"    pm.expect(source.id).equal(itemId, 'Идентификтор элемента должен совпадать с удаляемым');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    let item;\r",
+											"    try {       \r",
+											"        const item = await api.addItem(rnd.getItem());\r",
+											"        const foundedItem = await api.findItem(item.id);\r",
+											"        pm.collectionVariables.set(\"uid\", item.id);\r",
+											"        pm.collectionVariables.set(\"response\", foundedItem)\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{aopServiceUrl}}/item/:itemId",
+									"host": [
+										"{{aopServiceUrl}}"
+									],
+									"path": [
+										"item",
+										":itemId"
+									],
+									"variable": [
+										{
+											"key": "itemId",
+											"value": "{{uid}}"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
 				{
-					"name": "only async",
+					"name": "async api",
 					"item": [
 						{
 							"name": "Поиск async элемента по id",
@@ -1183,11 +1169,11 @@
 			"type": "string"
 		},
 		{
-			"key": "response",
+			"key": "uid",
 			"value": ""
 		},
 		{
-			"key": "uid",
+			"key": "response",
 			"value": ""
 		}
 	]
